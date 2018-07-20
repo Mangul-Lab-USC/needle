@@ -4,10 +4,6 @@ source $(dirname $0)/argparse.bash || exit 1
 argparse "$@" <<EOF || exit 1
 parser.add_argument('bam')
 parser.add_argument('outdir')
-parser.add_argument('-hg38', '--hg38', action='store_true',
-                    default=False, help='Choose this option, if reads are mapped to hg39 genome release. To check it please run samtools view -H <bam file> [default %(default)s]')
-parser.add_argument('-RNASeq', '--RNASeq', action='store_true',
-                    default=False, help=' Choose this option, if it is a RNA-Seq data[default %(default)s]')
 parser.add_argument('-f', '--force', action='store_true', default=False,
                     help='Forse [default %(default)s]')
 EOF
@@ -18,6 +14,8 @@ echo required infile: "$INBAM"
 echo required outfile: "$OUTDIR"
 
 
+ORGANISM='human'
+DB="$DIR/db_$ORGANISM"
 
 #Add MiniConda to PATH if it's available.
 if [ -d "$DIR_CODE/tools/MiniConda/bin" ]; then
@@ -115,7 +113,12 @@ samtools view -H ${SAMPLE}.megahit.contigs.protozoa.bam >${OUTDIR}/header.sam
 samtools view -F 4  ${SAMPLE}.megahit.contigs.protozoa.bam | grep -v -e 'XA:Z:' -e 'SA:Z:'| cat ${OUTDIR}/header.sam - | samtools view -b - | samtools depth - >${SAMPLE}.megahit.contigs.protozoa.uniq.cov
 
 
+bwa mem $DB/BWA.index/genome.fa ${SAMPLE}.virus.megahit.contigs.fa | samtools view -bS -F 4 -  >${SAMPLE}.virus.megahit.contigs.human.bam
+bwa mem $DB/BWA.index/genome.fa ${SAMPLE}.virus.megahit.contigs.fa | samtools view -bS -F 4 -  >${SAMPLE}.fungi.megahit.contigs.human.bam
+bwa mem $DB/BWA.index/genome.fa ${SAMPLE}.virus.megahit.contigs.fa | samtools view -bS -F 4 -  >${SAMPLE}.protozoa.megahit.contigs.human.bam
 
+
+echo "done :)"
 
 
 

@@ -2,14 +2,30 @@
 
 source $(dirname $0)/argparse.bash || exit 1
 argparse "$@" <<EOF || exit 1
-parser.add_argument('-r', '--forse', action='store_true', default=False,
-help='Forse [default %(default)s]')
+parser.add_argument('-r', '--forse', action='store_true', default=False,help='Forse [default %(default)s]')
+parser.add_argument('-d', '--db_location', default="NA", type=str,help='Provide location the database to be downloaded [default %(default)s]')
 
 EOF
 
 
 
+
 DIR=`dirname $(readlink -f "$0")`
+
+if [[ "$DB_LOCATION" != "NA" ]]
+then
+echo the answer: "$DB_LOCATION"
+else
+DB_LOCATION=$DIR
+fi
+
+
+
+
+
+
+
+
 
 # Set default options.
 CLEAN_ONLY=false
@@ -27,49 +43,62 @@ fi
 
 
 declare -A DB_ID_HUMAN=(
-['metaphlan']='15UGuZ4klBjIEYV-tv6t1nYa2GdyadZAm'
+['BWAindex']='19Uscw8KrPyUiuPcErrXpyOxN0PqUtbOZ'
 )
+
+declare -A DB_MD5_HUMAN=(
+['BWAindex']='4f009e3732d9f513e7b19b58edc41c13'
+)
+
+
 ORGANISM='human'
-download_list=$'metaphlan'
+download_list=$'BWAindex'
+
+cd "$DB_LOCATION"
+mkdir "db_$ORGANISM"
+cd "db_$ORGANISM"
 
 
-echo '----- Downloading MetaPhlAn 2 database ----------------------------------------------------'
-for download in $download_list; do
-echo "Downloading item: $download for $ORGANISM"
-success=false
-while [ $success = false ]; do
-case "$ORGANISM" in
-human)
-db_id="${DB_ID_HUMAN[$download]}"
-db_md5="${DB_MD5_HUMAN[$download]}"
-;;
-mouse)
-db_id="${DB_ID_MOUSE[$download]}"
-db_md5="${DB_MD5_MOUSE[$download]}"
-;;
-*)
-echo 'Error: Unknown ORGANISM.' >&2
-exit 1
-;;
-esac
-confirm_code=`curl --silent --insecure --cookie-jar cookies.txt \
-"https://docs.google.com/uc?export=download&id=$db_id" \
-| sed -rn 's .*confirm=([0-9A-Za-z_]+).* \1\n p'`
-curl --location --insecure --cookie cookies.txt -o "$download.tar.gz" \
-"https://docs.google.com/uc?export=download&confirm=$confirm_code&id=$db_id"
-rm cookies.txt
-if [ `md5sum "$download.tar.gz" | sed 's \(.*\)\ .* \1 '` = "$db_md5" ]; then
-tar -zxvf "$download.tar.gz"
-rm "$download.tar.gz"
-success=true
-else
-echo "Download of $download for $ORGANISM failed (checksum" \
-'mismatch. Retrying.'
-fi
-done
-done
+#echo '----- Downloading hg38 human reference ----------------------------------------------------'
+#for download in $download_list; do
+#echo "Downloading item: $download for $ORGANISM"
+#success=false
+#while [ $success = false ]; do
+#case "$ORGANISM" in
+#human)
+#db_id="${DB_ID_HUMAN[$download]}"
+#db_md5="${DB_MD5_HUMAN[$download]}"
+#;;
+#mouse)
+#db_id="${DB_ID_MOUSE[$download]}"
+#db_md5="${DB_MD5_MOUSE[$download]}"
+#;;
+#*)
+#echo 'Error: Unknown ORGANISM.' >&2
+#exit 1
+#;;
+#esac
+#confirm_code=`curl --silent --insecure --cookie-jar cookies.txt "https://docs.google.com/uc?export=download&id=$db_id" | sed -rn 's .*confirm=([0-9A-Za-z_]+).* \1\n p'`
 
-exit 1
+#curl --location --insecure --cookie cookies.txt \"https://docs.google.com/uc?export=download&confirm=$confirm_code&id=$db_id\"  >$download.tar.gz
+
+
+
+
+
+#rm cookies.txt
+#if [ `md5sum "$download.tar.gz" | sed 's \(.*\)\ .* \1 '` = "$db_md5" ]; then
+#tar -zxvf "$download.tar.gz"
+#rm "$download.tar.gz"
+#success=true
+#else
+#echo "Download of $download for $ORGANISM failed (checksum" \
+#'mismatch. Retrying.'
+#fi
+#done
+#done
+
+
 
 
 #ADD----------
@@ -110,26 +139,16 @@ else
         exit 0
     fi
 
-    # Download ImReP.
-    echo '----- Downloading ImRep --------------------------------------------------------'
-    git clone https://github.com/mandricigor/imrep.git
-    cd imrep
-    ./install.sh
-    cd ..
+
 
     #Download megahit
     echo '----- Downloading Megahit --------------------------------------------------'
-    git clone https://github.com/voutcn/megahit.git
-    cd megahit
-    make
-    cd ..
+    #git clone https://github.com/voutcn/megahit.git
+    #cd megahit
+    #make
+    #cd ..
 
-    # Download MetaPhlAn 2.
-    echo '----- Downloading MetaPhlAn 2 --------------------------------------------------'
-    hg clone https://bitbucket.org/biobakery/metaphlan2
-    cd metaphlan2
-    ln -s ../../db_human/databases
-    cd ..
+
 
     # Download MiniConda and add shebangs.
     echo '----- Setting up Python environment --------------------------------------------'
@@ -148,6 +167,13 @@ else
     #    sed -i '1c #!/usr/bin/env python2.7' metaphlan2/utils/read_fastx.py
     fi
 fi
+
+
+cd "$DIR"
+if [ `readlink -e "$DB_LOCATION"` != "$DIR" ]; then
+ln -s "$DB_LOCATION/db_$ORGANISM"
+fi
+echo "Done: Reference databases are ready"
 
 
 
