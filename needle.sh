@@ -60,11 +60,11 @@ SAMPLE=${OUTDIR}"/"${prefix}
 
 echo "Extract unmapped reads from " $BAM
 samtools view -f 0x4 -bh $BAM | samtools bam2fq - >${SAMPLE}.unmapped.fastq
-samtools view -bh $BAM NC_007605 | samtools fastq - > ${SAMPLE}.NC_007605.fastq
-rm -fr ${SAMPLE}.NC_007605.fastq
-cat ${SAMPLE}.unmapped.fastq ${SAMPLE}.NC_007605.fastq>${SAMPLE}.cat.unmapped.fastq
-rm -fr ${SAMPLE}.unmapped.fastq
-UNMAPPED=${SAMPLE}.cat.unmapped.fastq
+#samtools view -bh $BAM NC_007605 | samtools fastq - > ${SAMPLE}.NC_007605.fastq
+#rm -fr ${SAMPLE}.NC_007605.fastq
+#cat ${SAMPLE}.unmapped.fastq ${SAMPLE}.NC_007605.fastq>${SAMPLE}.cat.unmapped.fastq
+#rm -fr ${SAMPLE}.unmapped.fastq
+UNMAPPED=${SAMPLE}.unmapped.fastq
 
 
 
@@ -90,6 +90,36 @@ mv ${SAMPLE}.fungi.megahit/fungi.megahit.contigs.fa ${SAMPLE}.fungi.megahit.cont
 mv ${SAMPLE}.protozoa.megahit/protozoa.megahit.contigs.fa ${SAMPLE}.protozoa.megahit.contigs.fa
 
 
+
+echo "Map assembled contigs onto human reference"
+
+
+bwa mem $DB/BWA.index/genome.fa ${SAMPLE}.virus.megahit.contigs.fa | samtools view -bS -F 4 -  >${SAMPLE}.virus.megahit.contigs.human.bam
+bwa mem $DB/BWA.index/genome.fa ${SAMPLE}.fungi.megahit.contigs.fa | samtools view -bS -F 4 -  >${SAMPLE}.fungi.megahit.contigs.human.bam
+bwa mem $DB/BWA.index/genome.fa ${SAMPLE}.protozoa.megahit.contigs.fa | samtools view -bS -F 4 ->${SAMPLE}.protozoa.megahit.contigs.human.bam
+
+
+samtools view ${SAMPLE}.virus.megahit.contigs.human.bam | awk '{print $1}'  | sort | uniq >${SAMPLE}.virus.megahit.contigs.human.txt
+samtools view ${SAMPLE}.fungi.megahit.contigs.human.bam | awk '{print $1}'  | sort | uniq >${SAMPLE}.fungi.megahit.contigs.human.txt
+samtools view ${SAMPLE}.protozoa.megahit.contigs.human.bam | awk '{print $1}'  | sort | uniq >${SAMPLE}.protozoa.megahit.contigs.human.txt
+
+
+python ${DIR_CODE}/filter.contigs.py ${SAMPLE}.virus.megahit.contigs.fa ${SAMPLE}.virus.megahit.contigs.human.txt ${SAMPLE}.virus.megahit.contigs.filtered.fa
+python ${DIR_CODE}/filter.contigs.py ${SAMPLE}.fungi.megahit.contigs.fa ${SAMPLE}.fungi.megahit.contigs.human.txt ${SAMPLE}.fungi.megahit.contigs.filtered.fa
+python ${DIR_CODE}/filter.contigs.py ${SAMPLE}.protozoa.megahit.contigs.fa ${SAMPLE}.protozoa.megahit.contigs.human.txt ${SAMPLE}.protozoa.megahit.contigs.filtered.fa
+
+# remove original contigs
+rm -fr ${SAMPLE}.virus.megahit.contigs.fa
+rm -fr ${SAMPLE}.fungi.megahit.contigs.fa
+rm -fr ${SAMPLE}.protozoa.megahit.contigs.fa
+
+#rename filtered contigs file to be as the original ones
+mv ${SAMPLE}.virus.megahit.contigs.filtered.fa ${SAMPLE}.virus.megahit.contigs.fa
+mv ${SAMPLE}.fungi.megahit.contigs.filtered.fa ${SAMPLE}.fungi.megahit.contigs.fa
+mv ${SAMPLE}.protozoa.megahit.contigs.filtered.fa ${SAMPLE}.protozoa.megahit.contigs.fa
+
+
+# index contigs and map reads onto contigs
 bwa index ${SAMPLE}.virus.megahit.contigs.fa
 bwa mem ${SAMPLE}.virus.megahit.contigs.fa ${SAMPLE}.virus.fastq | samtools view -S -b -F 4 - | samtools sort - >${SAMPLE}.megahit.contigs.virus.bam
 
@@ -121,18 +151,13 @@ samtools depth ${SAMPLE}.megahit.contigs.protozoa.bam>${SAMPLE}.megahit.contigs.
 samtools view -H ${SAMPLE}.megahit.contigs.protozoa.bam >${OUTDIR}/header.sam
 samtools view -F 4  ${SAMPLE}.megahit.contigs.protozoa.bam | grep -v -e 'XA:Z:' -e 'SA:Z:'| cat ${OUTDIR}/header.sam - | samtools view -b - | samtools depth - >${SAMPLE}.megahit.contigs.protozoa.uniq.cov
 
+echo "-----------------------------------------------------"
+echo "Map assembled contigs onto the microbial references"
 
-echo "Map assembled contigs onto human reference"
+bwa mem -a ${DIR_CODE}/db.microbiome/viral.vipr/NONFLU_All.fastq ${SAMPLE}.virus.megahit.contigs.fa | samtools view -bS -F 4 -  >${SAMPLE}.virus.megahit.contigs.SV.bam
+bwa mem -a ${DIR_CODE}/db.microbiome/fungi/fungi.ncbi.february.3.2018.fasta ${SAMPLE}.fungi.megahit.contigs.fa  | samtools view -bS -F 4 -  >${SAMPLE}.fungi.megahit.contigs.SV.bam
+bwa mem -a ${DIR_CODE}/db.microbiome/protozoa/protozoa.ncbi.february.3.2018.fasta ${SAMPLE}.protozoa.megahit.contigs.fa  | samtools view -bS -F 4 ->${SAMPLE}.protozoa.megahit.contigs.SV.bam
 
-
-bwa mem $DB/BWA.index/genome.fa ${SAMPLE}.virus.megahit.contigs.fa | samtools view -bS -F 4 -  >${SAMPLE}.virus.megahit.contigs.human.bam
-bwa mem $DB/BWA.index/genome.fa ${SAMPLE}.fungi.megahit.contigs.fa | samtools view -bS -F 4 -  >${SAMPLE}.fungi.megahit.contigs.human.bam
-bwa mem $DB/BWA.index/genome.fa ${SAMPLE}.protozoa.megahit.contigs.fa | samtools view -bS -F 4 ->${SAMPLE}.protozoa.megahit.contigs.human.bam
-
-
-samtools view ${SAMPLE}.virus.megahit.contigs.human.bam | awk '{print $1}'  | sort | uniq >${SAMPLE}.virus.megahit.contigs.human.txt
-samtools view ${SAMPLE}.fungi.megahit.contigs.human.bam | awk '{print $1}'  | sort | uniq >${SAMPLE}.fungi.megahit.contigs.human.txt
-samtools view ${SAMPLE}.protozoa.megahit.contigs.human.bam | awk '{print $1}'  | sort | uniq >${SAMPLE}.protozoa.megahit.contigs.human.txt
 
 
 
