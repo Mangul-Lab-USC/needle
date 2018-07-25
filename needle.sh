@@ -4,6 +4,8 @@ source $(dirname $0)/argparse.bash || exit 1
 argparse "$@" <<EOF || exit 1
 parser.add_argument('bam')
 parser.add_argument('outdir')
+parser.add_argument('-fasta', '--fasta', action='store_true', default=False,
+                    help='Forse [default %(default)s]')
 parser.add_argument('-f', '--force', action='store_true', default=False,
                     help='Forse [default %(default)s]')
 EOF
@@ -59,14 +61,25 @@ SAMPLE=${OUTDIR}"/"${prefix}
 
 
 echo "Extract unmapped reads from " $BAM
+if [[ $FASTA ]]
+then
+perl ${DIR_CODE}/fasta_to_fastq.pl $BAM > ${SAMPLE}.cat.unmapped.fastq
+else
+
 samtools view -f 0x4 -bh $BAM | samtools bam2fq - >${SAMPLE}.unmapped.fastq
-#samtools view -bh $BAM NC_007605 | samtools fastq - > ${SAMPLE}.NC_007605.fastq
-#rm -fr ${SAMPLE}.NC_007605.fastq
-#cat ${SAMPLE}.unmapped.fastq ${SAMPLE}.NC_007605.fastq>${SAMPLE}.cat.unmapped.fastq
-#rm -fr ${SAMPLE}.unmapped.fastq
-UNMAPPED=${SAMPLE}.unmapped.fastq
+samtools view -bh $BAM NC_007605 | samtools fastq - > ${SAMPLE}.NC_007605.fastq
+rm -fr ${SAMPLE}.NC_007605.fastq
+cat ${SAMPLE}.unmapped.fastq ${SAMPLE}.NC_007605.fastq>${SAMPLE}.cat.unmapped.fastq
+rm -fr ${SAMPLE}.unmapped.fastq
+
+fi
 
 
+UNMAPPED=${SAMPLE}.cat.unmapped.fastq
+
+wc -l $UNMAPPED
+
+exit 1 
 
 bwa mem -a ${DB}/viral.vipr/NONFLU_All.fastq $UNMAPPED | samtools view -S -b -F 4 - | samtools sort - >${SAMPLE}.virus.bam
 bwa mem -a ${DB}/fungi/fungi.ncbi.february.3.2018.fasta $UNMAPPED | samtools view -S -b -F 4 - |  samtools sort - >${SAMPLE}.fungi.bam
