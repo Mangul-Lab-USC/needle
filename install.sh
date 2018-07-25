@@ -2,8 +2,9 @@
 
 source $(dirname $0)/argparse.bash || exit 1
 argparse "$@" <<EOF || exit 1
-parser.add_argument('-r', '--forse', action='store_true', default=False,help='Forse [default %(default)s]')
-parser.add_argument('-n', '--native', action='store_true', default=False,help='Native [default %(default)s]')
+parser.add_argument('-r', '--reinstall', action='store_true',default=False, help='store a boolean [default %(default)s]')
+parser.add_argument('-c', '--clean_only', action='store_true',default=False, help='store a boolean [default %(default)s]')
+parser.add_argument('-n', '--native', action='store_true',default=False, help='store a boolean [default %(default)s]')
 parser.add_argument('-d', '--db_location', default="NA", type=str,help='Provide location the database to be downloaded [default %(default)s]')
 
 EOF
@@ -29,14 +30,9 @@ fi
 # Set default options.
 CLEAN_ONLY=false
 FORCE=false
-NATIVE=false
 REINSTALL=false
 
 
-if [[ $FORSE ]]
-then
-REINSTALL=true
-fi
 
 
 
@@ -129,13 +125,13 @@ echo $REINSTALL
 # Skip this section if neither -c nor -r are selected and there is a previous
 # installation (as indicated by the presence of the imrep directory).
 echo '----- Checking for existing installations --------------------------------------'
-if [ $CLEAN_ONLY = false ] && [ $REINSTALL = false ] && [ -d 'imrep' ]; then
+if [ $CLEAN_ONLY ] && [ $REINSTALL ] && [ -d 'imrep' ]; then
     echo 'Existing installation found. Skipping tools download. To reinstall,' \
         'please use the -r option.'
 else
     echo '----- Removing previous versions -----------------------------------------------'
     rm -fr imrep metaphlan2 MiniConda
-    if [ $CLEAN_ONLY = true ]; then
+    if [ $CLEAN_ONLY ]; then
         echo 'Done: Cleaning complete.'
         exit 0
     fi
@@ -153,7 +149,7 @@ else
 
     # Download MiniConda and add shebangs.
     echo '----- Setting up Python environment --------------------------------------------'
-    if [ $NATIVE = false ]; then
+    if [ $NATIVE ]; then
         ./install-MiniConda.sh
         cd MiniConda/lib
         ln -s libncursesw.so.5 libtinfow.so.5
