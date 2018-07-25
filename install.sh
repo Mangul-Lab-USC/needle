@@ -3,7 +3,7 @@
 source $(dirname $0)/argparse.bash || exit 1
 argparse "$@" <<EOF || exit 1
 parser.add_argument('-r', '--forse', action='store_true', default=False,help='Forse [default %(default)s]')
-parser.add_argument('-n', '--native', action='store_true', default=False,help='Don't install Miniconda. Assumes Miniconda is already installed [default %(default)s]')
+parser.add_argument('-n', '--native', action='store_true', default=False,help='Native [default %(default)s]')
 parser.add_argument('-d', '--db_location', default="NA", type=str,help='Provide location the database to be downloaded [default %(default)s]')
 
 EOF
