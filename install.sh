@@ -5,14 +5,73 @@ argparse "$@" <<EOF || exit 1
 parser.add_argument('-r', '--reinstall', action='store_true',default=False, help='store a boolean [default %(default)s]')
 parser.add_argument('-c', '--clean_only', action='store_true',default=False, help='store a boolean [default %(default)s]')
 parser.add_argument('-n', '--native', action='store_true',default=False, help='store a boolean [default %(default)s]')
+parser.add_argument('-f', '--force', action='store_true',default=False, help='store a boolean [default %(default)s]')
 parser.add_argument('-d', '--db_location', default="NA", type=str,help='Provide location the database to be downloaded [default %(default)s]')
+parser.add_argument('-l', '--link', default="NA", type=str,help='Provide location the database to be downloaded [default %(default)s]')
+
 
 EOF
 
 
-
-
 DIR=`dirname $(readlink -f "$0")`
+
+#------------------------------------- Tools  -------------------------------------
+cd ${DIR}/tools/
+
+
+if [ $CLEAN_ONLY ]
+then
+echo '----- Removing previous versions -----------------------------------------------'
+rm -fr MiniConda megahit
+echo 'Done: Cleaning complete.'
+exit 0
+fi
+
+
+if [ $REINSTALL ]
+then
+echo '----- Removing previous versions -----------------------------------------------'
+rm -fr  MiniConda megahit
+fi
+
+
+if [ -d 'megahit' ]
+then
+echo 'Existing installation found. Skipping tools download. To reinstall, please use the -r option.'
+else
+
+
+#Download megahit
+echo '----- Downloading Megahit --------------------------------------------------'
+git clone https://github.com/voutcn/megahit.git
+cd megahit
+make
+cd ..
+
+
+
+# Download MiniConda and add shebangs.
+echo '----- Setting up Python environment --------------------------------------------'
+if [ $NATIVE ]
+then
+echo "--native option was choosen. And Minoconda instalation is skipped"
+else
+./install-MiniConda.sh
+cd MiniConda/lib
+ln -s libncursesw.so.5 libtinfow.so.5
+cd ../..
+MiniConda="$PWD/MiniConda/bin/python"
+fi
+fi
+
+
+
+#------------------------------------- Databases  -------------------------------------
+
+
+
+
+
 
 if [[ "$DB_LOCATION" != "NA" ]]
 then
@@ -21,20 +80,11 @@ else
 DB_LOCATION=$DIR
 fi
 
+echo "Database location ", $DB_LOCATION
 
 
-
-
-
-
-# Set default options.
-CLEAN_ONLY=false
-FORCE=false
-REINSTALL=false
-
-
-
-
+cd $DIR
+ORGANISM='human'
 
 
 declare -A DB_ID_HUMAN=(
@@ -52,10 +102,49 @@ declare -A DB_MD5_HUMAN=(
 )
 
 
-ORGANISM='human'
+# if
+if [ $FORCE ]
+then
+echo "FORSE option was choosen"
+fi
+
+
+
+
 download_list=$'BWAindex\nviral_vipr\nfungi\nprotozoa'
 
+echo '----- Downloading human and mirobial references ----------------------------------------------------'
 
+
+echo '----- Checking for existing databases ------------------------------------------'
+if [ -h "db_$ORGANISM" ] || [ -d "db_$ORGANISM" ]; then
+if [ $FORCE ]
+then
+echo 'Unlinking existing database.'
+if [ -h "db_$ORGANISM" ]; then
+rm "db_$ORGANISM"
+else
+rm -r "db_$ORGANISM"
+fi
+else
+echo 'Existing database found. Skipping database download. To unlink the current database, please use the -f option.'
+exit 0
+fi
+fi
+
+
+
+if [ "$LINK" != 'NA' ]; then
+echo '----- Linking database -----------------------------------------------------'
+if [ -d "$LINK" ]; then
+ln -s "$LINK"
+echo 'Done: Database linked.'
+exit 0
+else
+echo "Error: Link target doesn't exist." >&2
+exit 1
+fi
+fi
 
 
 
@@ -65,11 +154,6 @@ cd "$DB_LOCATION"
 mkdir "db_$ORGANISM"
 cd "db_$ORGANISM"
 
-
-
-
-
-echo '----- Downloading human and mirobial references ----------------------------------------------------'
 for download in $download_list; do
 echo "Downloading item: $download for $ORGANISM"
 success=false
@@ -92,9 +176,6 @@ confirm_code=`curl --silent --insecure --cookie-jar cookies.txt "https://docs.go
 curl --location --insecure --cookie cookies.txt "https://docs.google.com/uc?export=download&confirm=$confirm_code&id=$db_id"  >$download.tar.gz
 
 
-
-
-
 rm cookies.txt
 if [ `md5sum "$download.tar.gz" | sed 's \(.*\)\ .* \1 '` = "$db_md5" ]; then
 tar -zxvf "$download.tar.gz"
@@ -109,71 +190,11 @@ done
 
 
 
-
-
-
-# ------------------------------------------------------------------------------
-# DOWNLOAD TOOLS
-# ------------------------------------------------------------------------------
-
-cd "$DIR/tools"
-
-pwd
-ls
-echo $REINSTALL
-
-# Skip this section if neither -c nor -r are selected and there is a previous
-# installation (as indicated by the presence of the imrep directory).
-echo '----- Checking for existing installations --------------------------------------'
-if [ $CLEAN_ONLY ] && [ $REINSTALL ] && [ -d 'imrep' ]; then
-    echo 'Existing installation found. Skipping tools download. To reinstall,' \
-        'please use the -r option.'
-else
-    echo '----- Removing previous versions -----------------------------------------------'
-    rm -fr imrep metaphlan2 MiniConda
-    if [ $CLEAN_ONLY ]; then
-        echo 'Done: Cleaning complete.'
-        exit 0
-    fi
-
-
-
-    #Download megahit
-    echo '----- Downloading Megahit --------------------------------------------------'
-    git clone https://github.com/voutcn/megahit.git
-    cd megahit
-    make
-    cd ..
-
-
-
-    # Download MiniConda and add shebangs.
-    echo '----- Setting up Python environment --------------------------------------------'
-    if [ $NATIVE ]; then
-        ./install-MiniConda.sh
-        cd MiniConda/lib
-        ln -s libncursesw.so.5 libtinfow.so.5
-        cd ../..
-        MiniConda="$PWD/MiniConda/bin/python"
-    #    sed -i "1c #!$MiniConda" metaphlan2/metaphlan2.py
-    #    sed -i "1c #!$MiniConda" metaphlan2/strainphlan.py
-    #    sed -i "1c #!$MiniConda" metaphlan2/utils/read_fastx.py
-    #else
-    #    sed -i '1c #!/usr/bin/env python2.7' metaphlan2/metaphlan2.py
-    #    sed -i '1c #!/usr/bin/env python2.7' metaphlan2/strainphlan.py
-    #    sed -i '1c #!/usr/bin/env python2.7' metaphlan2/utils/read_fastx.py
-    fi
-fi
-
-
 cd "$DIR"
 if [ `readlink -e "$DB_LOCATION"` != "$DIR" ]; then
 ln -s "$DB_LOCATION/db_$ORGANISM"
 fi
 echo "Done: Reference databases are ready"
-
-
-
 
 
 
