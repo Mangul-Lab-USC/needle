@@ -59,7 +59,12 @@ else
 ./install-MiniConda.sh
 cd MiniConda/lib
 ln -s libncursesw.so.5 libtinfow.so.5
-cd ../..
+cd ../bin
+
+./conda install -c bioconda blast
+
+
+
 MiniConda="$PWD/MiniConda/bin/python"
 fi
 fi

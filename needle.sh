@@ -180,6 +180,16 @@ bwa mem -a ${DB}/protozoa/protozoa.ncbi.february.3.2018.fasta ${SAMPLE}.protozoa
 
 
 
+echo "-----------------------------------------------------"
+echo "Map assembled contigs onto the entire TREE of life to verify specificity of assembled contigs"
+
+
+blastn -query ${SAMPLE}.virus.megahit.contigs.fa -db nt -task megablast -dust no -outfmt "7 qseqid sseqid pident qlen length mismatch" -max_target_seqs 10 -out ${SAMPLE}.virus.megahit.contigs.BLAST.csv -remote
+blastn -query ${SAMPLE}.virus.megahit.contigs.fa -db nt -task megablast -dust no -max_target_seqs 10 -out ${SAMPLE}.virus.megahit.contigs.BLAST.long.csv -remote
+
+
+
+python process.blast.py ${SAMPLE}.virus.megahit.contigs.BLAST.csv ${SAMPLE}.virus.megahit.contigs.BLAST.long.csv ${SAMPLE}.virus.megahit.contigs.BLAST.house.format.csv
 
 
 echo "Success!!!"
