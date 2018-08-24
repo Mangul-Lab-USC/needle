@@ -1,0 +1,7 @@
+contig,id,name,identity,alignment_length,contig_length,adjusted_identity
+k21_2,AB261990.1,Lymphocytic_choriomeningitis_virus_genomic_RNA_segment_S_nearly_,100.0,916.0,916.0,100.0
+k21_2,AB627953.1,Lymphocytic_choriomeningitis_virus_genomic_RNA_segment:_S_complete_,99.017,916.0,916.0,99.017
+k21_2,EU136038.1,Dandenong_virus_isolate_0710-2678_segment_S_glycoprotein_(GPC)_,87.055,842.0,916.0,80.0221724891
+k21_2,EF164923.1,Lymphocytic_choriomeningitis_virus_glycoprotein_precursor_(GPC)_,85.595,840.0,916.0,78.493231441
+k21_3,DQ286931.1,Lymphocytic_choriomeningitis_virus_isolate_Marseille_#12_segment_,79.207,832.0,916.0,71.9434759825
+k21_3,KT731538.1,Lymphocytic_choriomeningitis_mammarenavirus_isolate_Comou_segment_,78.624,814.0,916.0,69.8689257642
