@@ -2,6 +2,8 @@ import argparse
 import re
 import sys
 import csv
+import gzip
+import os
 
 
 #comapre indetify of 10 hits from BLAST
@@ -70,6 +72,18 @@ for line in reader:
 
 file.close()
 
+#>gb|AB261990|Strain|M2|Description|Lymphocytic choriomeningitis virus genomic RNA, segment S, nearly complete sequence including cds, strain: M2.|Country||ncbiId|AB261990.1|vipr-id|284567
+print "Open look up table VIPR.table.txt.gz"
+
+dict_vipr={}
+
+DIR=os.path.dirname(os.path.realpath(__file__))
+
+with gzip.open(DIR+'/VIPR.table.txt.gz', 'rb') as f:
+    for line in f:
+        id=line.split("|")[1]
+        name=line.replace(">","").replace(",","").replace(" ","_").replace("|","_").replace(".","_").replace(":","").replace("\n","")
+        dict_vipr[id]=name
 
 
 
@@ -112,12 +126,13 @@ fileOut_blast.write("contig,id,name,identity,alignment_length,contig_length,adju
 
 
 fileOut=open(args.out,"w")
-fileOut.write("contig,id,name,number_mismatches,alignment_length,contig_length,adjusted_identity,flag\n")
+fileOut.write("contig,id,name,number_mismatches,alignment_length,contig_length,adjusted_identity,full_name,flag\n")
 
 
 for i in set(dict_BWA)-set(dict_blast):
     str=','.join(dict_BWA[i])
-    fileOut.write(str+",no-blast")
+    id_BWA = dict_BWA[i][1].split("|")[1]
+    fileOut.write(str+","+dict_vipr[id_BWA]+",no-blast")
     fileOut.write("\n")
 
 print "Contigs which are  mapped to custom microbial database and TREE OF LIFE FROM (BLAST)"
@@ -145,15 +160,15 @@ for i in both:
 
     if id_blast==id_BWA: # the same ids
         str = ','.join(dict_BWA[i])
-        fileOut.write(str + ",confirmed-blast-id")
+        fileOut.write(str +","+dict_vipr[id_BWA]+",confirmed-blast-id")
         fileOut.write("\n")
     elif genus_blast==genus_BWA: # the same genus
         str = ','.join(dict_BWA[i])
-        fileOut.write(str + ",confirmed-blast-genus")
+        fileOut.write(str +","+dict_vipr[id_BWA]+",confirmed-blast-genus")
         fileOut.write("\n")
     elif identity_BWA>identity_blast:
         str = ','.join(dict_BWA[i])
-        fileOut.write(str + ",better-than-blast")
+        fileOut.write(str +","+dict_vipr[id_BWA]+",better-than-blast")
         fileOut.write("\n")
     else: #BLAST is better => human then filter, or bacteria then report
 
