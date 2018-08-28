@@ -80,7 +80,7 @@ with pysam.AlignmentFile(args.bam, 'rb', check_sq=False) as input_fo:
                 
                 
                 adjusted_identity=(1.0-float(number_mismatches/float(alignment_length)))*100
-                fileOut.write(read.query_name+","+read.reference_name+","+dict[id_BWA]+","+str(number_mismatches)+","+str(alignment_length)+","+str(read_length)+","+str(adjusted_identity))
+                fileOut.write(read.query_name+","+id_BWA+","+dict[id_BWA]+","+str(number_mismatches)+","+str(alignment_length)+","+str(read_length)+","+str(adjusted_identity))
                 fileOut.write("\n")
 
 fileOut.close()

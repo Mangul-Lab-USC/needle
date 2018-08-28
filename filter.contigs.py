@@ -41,7 +41,7 @@ for fasta in fasta_sequences:
 
 out_file.close()
 
-print k, "microbial contigs are NOT mapped to human. Please map those contigs to the TREE OF LIFE using BLAST, https://blast.ncbi.nlm.nih.gov/Blast.cgi"
+print k, "microbial contigs are non-human"
 print "Success!",
 
 

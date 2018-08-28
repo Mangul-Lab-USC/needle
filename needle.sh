@@ -174,22 +174,42 @@ samtools view -F 4  ${SAMPLE}.megahit.contigs.protozoa.bam | grep -v -e 'XA:Z:' 
 echo "-----------------------------------------------------"
 echo "Map assembled contigs onto the microbial references"
 
-bwa mem -a ${DB}/viral.vipr/NONFLU_All.fastq ${SAMPLE}.virus.megahit.contigs.fa | samtools view -bS -F 4 -  >${SAMPLE}.virus.megahit.contigs.SV.bam
-bwa mem -a ${DB}/fungi/fungi.ncbi.february.3.2018.fasta ${SAMPLE}.fungi.megahit.contigs.fa  | samtools view -bS -F 4 -  >${SAMPLE}.fungi.megahit.contigs.SV.bam
-bwa mem -a ${DB}/protozoa/protozoa.ncbi.february.3.2018.fasta ${SAMPLE}.protozoa.megahit.contigs.fa  | samtools view -bS -F 4 ->${SAMPLE}.protozoa.megahit.contigs.SV.bam
+bwa mem -a ${DB}/viral.vipr/NONFLU_All.fastq ${SAMPLE}.virus.megahit.contigs.fa | samtools view -bS -F 4 - | samtools sort -  >${SAMPLE}.virus.megahit.contigs.SV.bam
+bwa mem -a ${DB}/fungi/fungi.ncbi.february.3.2018.fasta ${SAMPLE}.fungi.megahit.contigs.fa  | samtools view -bS -F 4 - | samtools sort -   >${SAMPLE}.fungi.megahit.contigs.SV.bam
+bwa mem -a ${DB}/protozoa/protozoa.ncbi.february.3.2018.fasta ${SAMPLE}.protozoa.megahit.contigs.fa  | samtools view -bS -F 4 - | samtools sort - >${SAMPLE}.protozoa.megahit.contigs.SV.bam
 
 
+samtools index ${SAMPLE}.virus.megahit.contigs.SV.bam
+samtools index ${SAMPLE}.fungi.megahit.contigs.SV.bam
+samtools index ${SAMPLE}.protozoa.megahit.contigs.SV.bam
+
+
+#virus, fungi or protozoa
+python ${DIR_CODE}/process.BWA.py -o virus ${SAMPLE}.virus.megahit.contigs.SV.bam ${SAMPLE}.virus.megahit.contigs.SV.csv
+python ${DIR_CODE}/process.BWA.py -o fungi ${SAMPLE}.fungi.megahit.contigs.SV.bam ${SAMPLE}.fungi.megahit.contigs.SV.csv
+python ${DIR_CODE}/process.BWA.py -o protozoa ${SAMPLE}.protozoa.megahit.contigs.SV.bam ${SAMPLE}.protozoa.megahit.contigs.SV.csv
 
 echo "-----------------------------------------------------"
 echo "Map assembled contigs onto the entire TREE of life to verify specificity of assembled contigs"
 
-
 blastn -query ${SAMPLE}.virus.megahit.contigs.fa -db nt -task megablast -dust no -outfmt "7 qseqid sseqid pident qlen length mismatch" -max_target_seqs 10 -out ${SAMPLE}.virus.megahit.contigs.BLAST.csv -remote
 blastn -query ${SAMPLE}.virus.megahit.contigs.fa -db nt -task megablast -dust no -max_target_seqs 10 -out ${SAMPLE}.virus.megahit.contigs.BLAST.long.csv -remote
+python ${DIR_CODE}/process.blast.py ${SAMPLE}.virus.megahit.contigs.BLAST.csv ${SAMPLE}.virus.megahit.contigs.BLAST.long.csv ${SAMPLE}.virus.megahit.contigs.BLAST.house.format.csv
+
+python tree.of.life.filter.py test/toy.example.virus.megahit.contigs.BLAST.house.format.csv test/toy.example.virus.megahit.contigs.SV.csv test5
+
+blastn -query ${SAMPLE}.protozoa.megahit.contigs.fa -db nt -task megablast -dust no -outfmt "7 qseqid sseqid pident qlen length mismatch" -max_target_seqs 10 -out ${SAMPLE}.protozoa.megahit.contigs.BLAST.csv -remote
+blastn -query ${SAMPLE}.protozoa.megahit.contigs.fa -db nt -task megablast -dust no -max_target_seqs 10 -out ${SAMPLE}.protozoa.megahit.contigs.BLAST.long.csv -remote
+python ${DIR_CODE}/process.blast.py ${SAMPLE}.protozoa.megahit.contigs.BLAST.csv ${SAMPLE}.protozoa.megahit.contigs.BLAST.long.csv ${SAMPLE}.protozoa.megahit.contigs.BLAST.house.format.csv
+python ${DIR_CODE}/tree.of.life.filter.py ${SAMPLE}.protozoa.megahit.contigs.BLAST.house.format.csv ${SAMPLE}.protozoa.megahit.contigs.SV.csv ${SAMPLE}.protozoa.megahit.contigs.SV.filtered.csv
 
 
 
-python process.blast.py ${SAMPLE}.virus.megahit.contigs.BLAST.csv ${SAMPLE}.virus.megahit.contigs.BLAST.long.csv ${SAMPLE}.virus.megahit.contigs.BLAST.house.format.csv
+blastn -query ${SAMPLE}.fungi.megahit.contigs.fa -db nt -task megablast -dust no -outfmt "7 qseqid sseqid pident qlen length mismatch" -max_target_seqs 10 -out ${SAMPLE}.fungi.megahit.contigs.BLAST.csv -remote
+blastn -query ${SAMPLE}.fungi.megahit.contigs.fa -db nt -task megablast -dust no -max_target_seqs 10 -out ${SAMPLE}.fungi.megahit.contigs.BLAST.long.csv -remote
+python ${DIR_CODE}/process.blast.py ${SAMPLE}.fungi.megahit.contigs.BLAST.csv ${SAMPLE}.fungi.megahit.contigs.BLAST.long.csv ${SAMPLE}.fungi.megahit.contigs.BLAST.house.format.csv
+python ${DIR_CODE}/tree.of.life.filter.py ${SAMPLE}.fungi.megahit.contigs.BLAST.house.format.csv ${SAMPLE}.fungi.megahit.contigs.SV.csv ${SAMPLE}.fungi.megahit.contigs.SV.filtered.csv
+
 
 
 echo "Success!!!"

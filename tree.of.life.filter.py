@@ -91,7 +91,7 @@ kmers=set()
 
 for line in reader:
     kmer_name=line[0]
-    ref_id=line[1].split("|")[1]
+    ref_id=line[1]
     identity=float(line[6])
     if kmer_name not in kmers: #kmer occurs first time => the best hit
         kmers.add(kmer_name)
@@ -120,7 +120,7 @@ fileOut.write("contig,id,name,number_mismatches,alignment_length,contig_length,a
 
 for i in set(dict_BWA)-set(dict_blast):
     str=','.join(dict_BWA[i])
-    id_BWA = dict_BWA[i][1].split("|")[1]
+    id_BWA = dict_BWA[i][1]
     fileOut.write(str+",no-blast")
     fileOut.write("\n")
 
@@ -137,7 +137,7 @@ blast_bact=set()
 #['k21_2', 'gb|AB261990|Strain|M2|Description|Lymphocytic', 'gb|AB261990|Strain|M2|Description|Lymphocytic', '0', '916', '916', '100.0']
 for i in both:
     id_blast=dict_blast[i][1].split(".")[0]
-    id_BWA=dict_BWA[i][1].split("|")[1]
+    id_BWA=dict_BWA[i][1]
     genus_blast=dict_blast[i][2].split("_")[0]
     genus_BWA = dict_BWA[i][2].split("_")[0]
     identity_blast=float(dict_blast[i][6])
