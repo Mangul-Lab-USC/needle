@@ -66,7 +66,7 @@ fileOut.write("contig,id,name,number_mismatches,alignment_length,contig_length,a
 
 
 with pysam.AlignmentFile(args.bam, 'rb', check_sq=False) as input_fo:
-            for read in input_fo.fetch():
+            for read in input_fo.fetch(until_eof=True):
                 number_mismatches = int(read.get_tag('NM'))
                 read_length = int(read.infer_read_length())
                 alignment_length = int(read.query_alignment_length)
