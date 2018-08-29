@@ -34,7 +34,7 @@ ap = argparse.ArgumentParser()
 ap.add_argument('input_blast', help='--')
 ap.add_argument('input_BWA', help='--')
 ap.add_argument('out', help='---')
-ap.add_argument("-o",help="[virus, fungi or protozoa]. By default virus", default='virus',type=str)
+#ap.add_argument("-o",help="[virus, fungi or protozoa]. By default virus", default='virus',type=str)
 args = ap.parse_args()
 
 
@@ -144,11 +144,11 @@ for i in both:
     print dict_blast[i]
     print dict_BWA[i]	
     id_blast=dict_blast[i][1].split(".")[0]
-    
-    if args.o=="fungi" or args.o=="protozoa":
-    	id_BWA=dict_BWA[i][1]
-    elif args.o=="virus":
-        id_BWA=dict_BWA[i][1].split("|")[1]
+    print dict_BWA[i]
+    #if args.o=="fungi" or args.o=="protozoa":
+    id_BWA=dict_BWA[i][1]
+    #elif args.o=="virus":
+        #id_BWA=dict_BWA[i][1].split("|")[1]
     genus_blast=dict_blast[i][2].split("_")[0]
     genus_BWA = dict_BWA[i][1].split("|")[5]
     identity_blast=float(dict_blast[i][6])
