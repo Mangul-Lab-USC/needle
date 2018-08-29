@@ -196,19 +196,19 @@ blastn -query ${SAMPLE}.virus.megahit.contigs.fa -db nt -task megablast -dust no
 blastn -query ${SAMPLE}.virus.megahit.contigs.fa -db nt -task megablast -dust no -max_target_seqs 10 -out ${SAMPLE}.virus.megahit.contigs.BLAST.long.csv -remote
 python ${DIR_CODE}/process.blast.py ${SAMPLE}.virus.megahit.contigs.BLAST.csv ${SAMPLE}.virus.megahit.contigs.BLAST.long.csv ${SAMPLE}.virus.megahit.contigs.BLAST.house.format.csv
 
-python ${DIR_CODE}/tree.of.life.filter.py -o virus ${SAMPLE}.virus.megahit.contigs.BLAST.house.format.csv ${SAMPLE}.virus.megahit.contigs.SV.csv ${SAMPLE}.virus.megahit.contigs.SV.filtered.csv
+python ${DIR_CODE}/tree.of.life.filter.py ${SAMPLE}.virus.megahit.contigs.BLAST.house.format.csv ${SAMPLE}.virus.megahit.contigs.SV.csv ${SAMPLE}.virus.megahit.contigs.SV.filtered.csv
 
 blastn -query ${SAMPLE}.protozoa.megahit.contigs.fa -db nt -task megablast -dust no -outfmt "7 qseqid sseqid pident qlen length mismatch" -max_target_seqs 10 -out ${SAMPLE}.protozoa.megahit.contigs.BLAST.csv -remote
 blastn -query ${SAMPLE}.protozoa.megahit.contigs.fa -db nt -task megablast -dust no -max_target_seqs 10 -out ${SAMPLE}.protozoa.megahit.contigs.BLAST.long.csv -remote
 python ${DIR_CODE}/process.blast.py ${SAMPLE}.protozoa.megahit.contigs.BLAST.csv ${SAMPLE}.protozoa.megahit.contigs.BLAST.long.csv ${SAMPLE}.protozoa.megahit.contigs.BLAST.house.format.csv
-python ${DIR_CODE}/tree.of.life.filter.py -o protozoa ${SAMPLE}.protozoa.megahit.contigs.BLAST.house.format.csv ${SAMPLE}.protozoa.megahit.contigs.SV.csv ${SAMPLE}.protozoa.megahit.contigs.SV.filtered.csv
+python ${DIR_CODE}/tree.of.life.filter.py ${SAMPLE}.protozoa.megahit.contigs.BLAST.house.format.csv ${SAMPLE}.protozoa.megahit.contigs.SV.csv ${SAMPLE}.protozoa.megahit.contigs.SV.filtered.csv
 
 
 
 blastn -query ${SAMPLE}.fungi.megahit.contigs.fa -db nt -task megablast -dust no -outfmt "7 qseqid sseqid pident qlen length mismatch" -max_target_seqs 10 -out ${SAMPLE}.fungi.megahit.contigs.BLAST.csv -remote
 blastn -query ${SAMPLE}.fungi.megahit.contigs.fa -db nt -task megablast -dust no -max_target_seqs 10 -out ${SAMPLE}.fungi.megahit.contigs.BLAST.long.csv -remote
 python ${DIR_CODE}/process.blast.py ${SAMPLE}.fungi.megahit.contigs.BLAST.csv ${SAMPLE}.fungi.megahit.contigs.BLAST.long.csv ${SAMPLE}.fungi.megahit.contigs.BLAST.house.format.csv
-python ${DIR_CODE}/tree.of.life.filter.py -o fungi ${SAMPLE}.fungi.megahit.contigs.BLAST.house.format.csv ${SAMPLE}.fungi.megahit.contigs.SV.csv ${SAMPLE}.fungi.megahit.contigs.SV.filtered.csv
+python ${DIR_CODE}/tree.of.life.filter.py ${SAMPLE}.fungi.megahit.contigs.BLAST.house.format.csv ${SAMPLE}.fungi.megahit.contigs.SV.csv ${SAMPLE}.fungi.megahit.contigs.SV.filtered.csv
 
 
 
