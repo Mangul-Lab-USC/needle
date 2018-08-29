@@ -23,7 +23,7 @@ if args.o=="virus":
     with gzip.open(DIR+'/VIPR.table.txt.gz', 'rb') as f:
         for line in f:
             id=line.split("|")[1]
-            name=line.replace(">","").replace(",","").replace(" ","_").replace("|","_").replace(".","_").replace(":","").replace("\n","")
+            name=line.split("|")[4].replace(">","").replace(",","").replace(" ","_").replace("|","_").replace(".","_").replace(":","").replace("\n","")
             dict[id]=name
 elif args.o=="protozoa":
     #>NC_001905.3_Leishmania_major
