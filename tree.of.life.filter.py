@@ -150,7 +150,7 @@ for i in both:
     #elif args.o=="virus":
         #id_BWA=dict_BWA[i][1].split("|")[1]
     genus_blast=dict_blast[i][2].split("_")[0]
-    genus_BWA = dict_BWA[i][1].split("|")[5]
+    genus_BWA = dict_BWA[i][1].split("_")[0]
     identity_blast=float(dict_blast[i][6])
     identity_BWA = float(dict_BWA[i][6])
 
