@@ -196,7 +196,7 @@ blastn -query ${SAMPLE}.virus.megahit.contigs.fa -db nt -task megablast -dust no
 blastn -query ${SAMPLE}.virus.megahit.contigs.fa -db nt -task megablast -dust no -max_target_seqs 10 -out ${SAMPLE}.virus.megahit.contigs.BLAST.long.csv -remote
 python ${DIR_CODE}/process.blast.py ${SAMPLE}.virus.megahit.contigs.BLAST.csv ${SAMPLE}.virus.megahit.contigs.BLAST.long.csv ${SAMPLE}.virus.megahit.contigs.BLAST.house.format.csv
 
-python tree.of.life.filter.py test/toy.example.virus.megahit.contigs.BLAST.house.format.csv test/toy.example.virus.megahit.contigs.SV.csv test5
+python ${DIR_CODE}/tree.of.life.filter.py test/toy.example.virus.megahit.contigs.BLAST.house.format.csv test/toy.example.virus.megahit.contigs.SV.csv test5
 
 blastn -query ${SAMPLE}.protozoa.megahit.contigs.fa -db nt -task megablast -dust no -outfmt "7 qseqid sseqid pident qlen length mismatch" -max_target_seqs 10 -out ${SAMPLE}.protozoa.megahit.contigs.BLAST.csv -remote
 blastn -query ${SAMPLE}.protozoa.megahit.contigs.fa -db nt -task megablast -dust no -max_target_seqs 10 -out ${SAMPLE}.protozoa.megahit.contigs.BLAST.long.csv -remote
