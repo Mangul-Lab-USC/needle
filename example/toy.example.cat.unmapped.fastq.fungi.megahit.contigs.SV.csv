@@ -1,0 +1,10 @@
+contig,id,name,number_mismatches,alignment_length,contig_length,adjusted_identity
+k31_2,NC_006037.1,Kluyveromyces_lactis_strain_NRRL_Y-1140_chromosome_A_complete_sequence,0,529,529,100.0
+k31_2,NC_006038.1,Kluyveromyces_lactis_strain_NRRL_Y-1140_chromosome_B_complete_sequence,15,515,529,97.0873786408
+k31_2,NC_006039.1,Kluyveromyces_lactis_strain_NRRL_Y-1140_chromosome_C_complete_sequence,0,529,529,100.0
+k31_2,NC_006039.1,Kluyveromyces_lactis_strain_NRRL_Y-1140_chromosome_C_complete_sequence,0,529,529,100.0
+k31_2,NC_006040.1,Kluyveromyces_lactis_strain_NRRL_Y-1140_chromosome_D_complete_sequence,0,529,529,100.0
+k31_2,NC_006040.1,Kluyveromyces_lactis_strain_NRRL_Y-1140_chromosome_D_complete_sequence,0,529,529,100.0
+k31_2,NC_006041.1,Kluyveromyces_lactis_strain_NRRL_Y-1140_chromosome_E_complete_sequence,0,529,529,100.0
+k31_2,NC_006042.1,Kluyveromyces_lactis_strain_NRRL_Y-1140_chromosome_F_complete_sequence,0,529,529,100.0
+k31_2,NC_006042.1,Kluyveromyces_lactis_strain_NRRL_Y-1140_chromosome_F_complete_sequence,0,529,529,100.0

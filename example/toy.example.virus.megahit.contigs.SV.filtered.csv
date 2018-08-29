@@ -1,2 +1,8 @@
-contig,id,name,number_mismatches,alignment_length,contig_length,adjusted_identity,flag
-k21_2,gb|AB261990|Strain|M2|Description|Lymphocytic,gb|AB261990|Strain|M2|Description|Lymphocytic,0,916,916,100.0,confirmed-blast-id
+contig,id,name,number_mismatches,alignment_length,contig_length,adjusted_identity
+k21_2,AB261990,Lymphocytic_choriomeningitis_virus_genomic_RNA_segment_S_nearly_complete_sequence_including_cds_strain_M2_,0,916,916,100.0
+k21_2,AB261991,Lymphocytic_choriomeningitis_virus_genomic_RNA_segment_S_nearly_complete_sequence_including_cds_strain_M1_,0,916,916,100.0
+k21_2,AB627953,Lymphocytic_choriomeningitis_virus_genomic_RNA_segment_S_complete_sequence_strain_BRC_,9,916,916,99.0174672489
+k21_2,HW506014,JP_2014502848-A/20_VIRAL_DIAGNOSTICS_,0,916,916,100.0
+k21_2,HW506015,JP_2014502848-A/21_VIRAL_DIAGNOSTICS_,0,916,916,100.0
+k21_2,JC098648,Sequence_20_from_Patent_EP2664680_,0,916,916,100.0
+k21_2,JC098649,Sequence_21_from_Patent_EP2664680_,0,916,916,100.0

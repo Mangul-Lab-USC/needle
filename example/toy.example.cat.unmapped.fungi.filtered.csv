@@ -1,0 +1,2 @@
+contig,id,name,number_mismatches,alignment_length,contig_length,adjusted_identity,flag
+k31_2,NC_006037.1,Kluyveromyces_lactis_strain_NRRL_Y-1140_chromosome_A_complete_sequence,0,529,529,100.0,confirmed-blast-genus

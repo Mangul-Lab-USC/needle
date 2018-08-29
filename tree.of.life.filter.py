@@ -150,14 +150,14 @@ for i in both:
     #elif args.o=="virus":
         #id_BWA=dict_BWA[i][1].split("|")[1]
     genus_blast=dict_blast[i][2].split("_")[0]
-    genus_BWA = dict_BWA[i][1].split("_")[0]
+    genus_BWA = dict_BWA[i][2].split("_")[0]
     identity_blast=float(dict_blast[i][6])
     identity_BWA = float(dict_BWA[i][6])
 
     print id_blast,id_BWA,genus_blast,genus_BWA,identity_BWA,identity_blast
     #JF145555 gb|AF191073|Strain|UNKNOWN-AF191073|Description|Stealth Uncultured gb 99.2174559687 99.2174559687
 
-
+    print "genus--->",genus_blast,genus_BWA
     if id_blast==id_BWA: # the same ids
 	print "the same ids"
         str = ','.join(dict_BWA[i])
