@@ -21,7 +21,7 @@ def compare(l):
         id_blast =i[1].split(".")[0]
         if genus_blast!=best_genus:
             if abs(identity-best_identity)<2.0:
-		print "compare--",l,identity,best_identity,identity-best_identity
+		print "compare-------",l,identity,best_identity,identity-best_identity
                 return False # we have found hit from other genus with within 3% similarity
 
     return True # we have NOT found hit from other genus with within 3% similarity
@@ -140,7 +140,8 @@ blast_bact=set()
 #['k81_6', 'gb|AF191073|Strain|UNKNOWN-AF191073|Description|Stealth', 'gb_AF191073_Strain_UNKNOWN-AF191073_Description_Stealth_virus_1_clone_3B43_genomic_sequence__Country__ncbiId_AF191073_1_vipr-id_676234', '159', '445', '511', '64.2696629213']
 
 for i in both:
-    print "-----"
+    print "==================================="
+    print "==================================="
     print dict_blast[i]
     print dict_BWA[i]	
     id_blast=dict_blast[i][1].split(".")[0]
@@ -168,11 +169,13 @@ for i in both:
         str = ','.join(dict_BWA[i])
         fileOut.write(str +",confirmed-blast-genus")
         fileOut.write("\n")
-    elif identity_BWA>identity_blast:
+    elif identity_BWA-identity_blast>5.0:
 	print "identity_BWA>identity_blast"
         str = ','.join(dict_BWA[i])
         fileOut.write(str +",better-than-blast")
         fileOut.write("\n")
+    elif identity_BWA>identity_blast and identity_BWA-identity_blast<=5.0:
+	print "identity_BWA>identity_blast BUT NOT SIGNIFICANTLY"
     else: #BLAST is better => human then filter, or bacteria then report
 
 	

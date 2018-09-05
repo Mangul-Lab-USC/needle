@@ -1,0 +1,4 @@
+156:    identity_BWA = float(dict_BWA[i][6])
+158:    print id_blast,id_BWA,genus_blast,genus_BWA,identity_BWA,identity_blast
+172:    elif identity_BWA>identity_blast:
+173:	print "identity_BWA>identity_blast"
