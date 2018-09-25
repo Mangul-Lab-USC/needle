@@ -75,15 +75,33 @@ echo "FASTQ is provided"
 UNMAPPED=$BAM
 else
 echo "BAM file is provided"
-samtools view -f 0x4 -bh $BAM | samtools bam2fq - >${SAMPLE}.unmapped.fastq
-samtools view -bh $BAM NC_007605 | samtools fastq - > ${SAMPLE}.NC_007605.fastq
-rm -fr ${SAMPLE}.NC_007605.fastq
-cat ${SAMPLE}.unmapped.fastq ${SAMPLE}.NC_007605.fastq>${SAMPLE}.cat.unmapped.fastq
-rm -fr ${SAMPLE}.unmapped.fastq
+
+samtools index $BAM
+
+samtools view -H $BAM | grep SN | awk '{print $2}' | awk -F ":" '{if ($1=="SN") print $2}' | sort | uniq | grep -v chr  >${OUTDIR}/non.human.references.txt
+
+echo "Number of non human references"
+wc -l ${OUTDIR}/non.human.references.txt
+#rm -fr ${SAMPLE}.non.human.fastq
+while read line
+do
+echo $line
+samtools view -bh $BAM $line | samtools fastq - >> ${SAMPLE}.non.human.fastq
+done<${OUTDIR}/non.human.references.txt
+
+
+samtools view -f4 -bh $BAM | samtools bam2fq - >${SAMPLE}.unmapped.fastq
+cat ${SAMPLE}.non.human.fastq ${SAMPLE}.unmapped.fastq >${SAMPLE}.cat.unmapped.fastq
+
+wc -l ${SAMPLE}.non.human.fastq
+
+
+#rm -fr ${SAMPLE}.unmapped.fastq
 UNMAPPED=${SAMPLE}.cat.unmapped.fastq
 fi
 
 
+"------>Number of unmapped reads"
 wc -l $UNMAPPED 
 
 
@@ -110,33 +128,11 @@ mv ${SAMPLE}.fungi.megahit/fungi.megahit.contigs.fa ${SAMPLE}.fungi.megahit.cont
 mv ${SAMPLE}.protozoa.megahit/protozoa.megahit.contigs.fa ${SAMPLE}.protozoa.megahit.contigs.fa
 
 
+"-------->Number of assembled contigs"
+wc -l ${SAMPLE}.virus.megahit.contigs.fa
+wc -l ${SAMPLE}.fungi.megahit.contigs.fa
+wc -l ${SAMPLE}.protozoa.megahit.contigs.fa
 
-echo "Map assembled contigs onto human reference"
-
-
-bwa mem $DB/BWA.index/genome.fa ${SAMPLE}.virus.megahit.contigs.fa | samtools view -bS -F 4 -  >${SAMPLE}.virus.megahit.contigs.human.bam
-bwa mem $DB/BWA.index/genome.fa ${SAMPLE}.fungi.megahit.contigs.fa | samtools view -bS -F 4 -  >${SAMPLE}.fungi.megahit.contigs.human.bam
-bwa mem $DB/BWA.index/genome.fa ${SAMPLE}.protozoa.megahit.contigs.fa | samtools view -bS -F 4 ->${SAMPLE}.protozoa.megahit.contigs.human.bam
-
-
-samtools view ${SAMPLE}.virus.megahit.contigs.human.bam | awk '{print $1}'  | sort | uniq >${SAMPLE}.virus.megahit.contigs.human.txt
-samtools view ${SAMPLE}.fungi.megahit.contigs.human.bam | awk '{print $1}'  | sort | uniq >${SAMPLE}.fungi.megahit.contigs.human.txt
-samtools view ${SAMPLE}.protozoa.megahit.contigs.human.bam | awk '{print $1}'  | sort | uniq >${SAMPLE}.protozoa.megahit.contigs.human.txt
-
-
-python ${DIR_CODE}/filter.contigs.py ${SAMPLE}.virus.megahit.contigs.fa ${SAMPLE}.virus.megahit.contigs.human.txt ${SAMPLE}.virus.megahit.contigs.filtered.fa
-python ${DIR_CODE}/filter.contigs.py ${SAMPLE}.fungi.megahit.contigs.fa ${SAMPLE}.fungi.megahit.contigs.human.txt ${SAMPLE}.fungi.megahit.contigs.filtered.fa
-python ${DIR_CODE}/filter.contigs.py ${SAMPLE}.protozoa.megahit.contigs.fa ${SAMPLE}.protozoa.megahit.contigs.human.txt ${SAMPLE}.protozoa.megahit.contigs.filtered.fa
-
-# remove original contigs
-rm -fr ${SAMPLE}.virus.megahit.contigs.fa
-rm -fr ${SAMPLE}.fungi.megahit.contigs.fa
-rm -fr ${SAMPLE}.protozoa.megahit.contigs.fa
-
-#rename filtered contigs file to be as the original ones
-mv ${SAMPLE}.virus.megahit.contigs.filtered.fa ${SAMPLE}.virus.megahit.contigs.fa
-mv ${SAMPLE}.fungi.megahit.contigs.filtered.fa ${SAMPLE}.fungi.megahit.contigs.fa
-mv ${SAMPLE}.protozoa.megahit.contigs.filtered.fa ${SAMPLE}.protozoa.megahit.contigs.fa
 
 
 # index contigs and map reads onto contigs
@@ -210,6 +206,11 @@ blastn -query ${SAMPLE}.fungi.megahit.contigs.fa -db nt -task megablast -dust no
 python ${DIR_CODE}/process.blast.py ${SAMPLE}.fungi.megahit.contigs.BLAST.csv ${SAMPLE}.fungi.megahit.contigs.BLAST.long.csv ${SAMPLE}.fungi.megahit.contigs.BLAST.house.format.csv
 python ${DIR_CODE}/tree.of.life.filter.py ${SAMPLE}.fungi.megahit.contigs.BLAST.house.format.csv ${SAMPLE}.fungi.megahit.contigs.SV.csv ${SAMPLE}.fungi.megahit.contigs.SV.filtered.csv
 
+
+echo "Contigs after filtering are here"
+wc -l ${SAMPLE}.virus.megahit.contigs.SV.filtered.csv
+wc -l ${SAMPLE}.fungi.megahit.contigs.SV.filtered.csv
+wc -l ${SAMPLE}.protozoa.megahit.contigs.SV.filtered.csv
 
 
 echo "Success!!!"
