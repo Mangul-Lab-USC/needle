@@ -76,9 +76,13 @@ UNMAPPED=$BAM
 else
 echo "BAM file is provided"
 
-samtools index $BAM
 
-samtools view -H $BAM | grep SN | awk '{print $2}' | awk -F ":" '{if ($1=="SN") print $2}' | sort | uniq | grep -v chr  >${OUTDIR}/non.human.references.txt
+samtools view -H $BAM | grep SN | awk '{print $2}' | awk -F ":" '{if ($1=="SN") print $2}' | sort | uniq | grep -v chr  | grep -v "^[1-9]$" | grep -v "^[1-9][0-9]$" | grep -v "^MT$" | grep -v "^X$" | grep -v "^Y$" | grep -v "GL000">${OUTDIR}/non.human.references.txt
+
+
+
+exit 1
+
 
 echo "Number of non human references"
 wc -l ${OUTDIR}/non.human.references.txt
