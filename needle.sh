@@ -81,7 +81,6 @@ samtools view -H $BAM | grep SN | awk '{print $2}' | awk -F ":" '{if ($1=="SN") 
 
 
 
-exit 1
 
 
 echo "Number of non human references"
