@@ -116,7 +116,7 @@ fi
 
 
 
-download_list=$'BWAindex\nviral_vipr\nfungi\nprotozoa'
+download_list=$'viral_vipr\nfungi\nprotozoa'
 
 echo '----- Downloading human and mirobial references ----------------------------------------------------'
 
