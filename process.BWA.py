@@ -3,6 +3,7 @@ import csv
 import argparse
 import os
 import gzip
+import sys
 
 ap = argparse.ArgumentParser()
 ap.add_argument('bam', help='--')
@@ -72,7 +73,12 @@ with pysam.AlignmentFile(args.bam, 'rb', check_sq=False) as input_fo:
                 read_length = int(read.infer_read_length())
                 alignment_length = int(read.query_alignment_length)
                 soft = read_length - alignment_length
-                number_mismatches += soft
+
+
+		#print number_mismatches, read_length, alignment_length,soft
+		#print read
+		#print read.get_tag('NM')
+
                 
                 if args.o=="virus":
                     id_BWA=read.reference_name.split("|")[1]
@@ -80,7 +86,8 @@ with pysam.AlignmentFile(args.bam, 'rb', check_sq=False) as input_fo:
                     id_BWA=read.reference_name
                 
                 
-                adjusted_identity=(1.0-float(number_mismatches/float(alignment_length)))*100
+                adjusted_identity= (alignment_length-number_mismatches)/float(read_length)
+
                 fileOut.write(read.query_name+","+id_BWA+","+dict[id_BWA]+","+str(number_mismatches)+","+str(alignment_length)+","+str(read_length)+","+str(adjusted_identity))
                 fileOut.write("\n")
 
