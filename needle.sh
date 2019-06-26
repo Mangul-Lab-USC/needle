@@ -56,7 +56,6 @@ mkdir -p "$OUTDIR"
 start=`date +%s`
 echo  "Start needle analysis ... "$start
 
-megahit=${DIR_CODE}/tools/megahit/megahit
 prefix=$(basename $BAM | awk -F ".bam" '{print $1}')
 SAMPLE=${OUTDIR}"/"${prefix}
 
@@ -123,9 +122,9 @@ samtools fastq ${SAMPLE}.protozoa.bam >${SAMPLE}.protozoa.fastq
 rm -fr ${SAMPLE}*bam
 rm -fr ${SAMPLE}*bai
 
-$megahit --k-step 10 -r ${SAMPLE}.virus.fastq -o ${SAMPLE}.virus.megahit --out-prefix virus.megahit
-$megahit --k-step 10 -r ${SAMPLE}.fungi.fastq -o ${SAMPLE}.fungi.megahit --out-prefix fungi.megahit
-$megahit --k-step 10 -r ${SAMPLE}.protozoa.fastq -o ${SAMPLE}.protozoa.megahit --out-prefix protozoa.megahit
+megahit --k-step 10 -r ${SAMPLE}.virus.fastq -o ${SAMPLE}.virus.megahit --out-prefix virus.megahit
+megahit --k-step 10 -r ${SAMPLE}.fungi.fastq -o ${SAMPLE}.fungi.megahit --out-prefix fungi.megahit
+megahit --k-step 10 -r ${SAMPLE}.protozoa.fastq -o ${SAMPLE}.protozoa.megahit --out-prefix protozoa.megahit
 mv ${SAMPLE}.virus.megahit/virus.megahit.contigs.fa ${SAMPLE}.virus.megahit.contigs.fa
 mv ${SAMPLE}.fungi.megahit/fungi.megahit.contigs.fa ${SAMPLE}.fungi.megahit.contigs.fa
 mv ${SAMPLE}.protozoa.megahit/protozoa.megahit.contigs.fa ${SAMPLE}.protozoa.megahit.contigs.fa

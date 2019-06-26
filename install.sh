@@ -41,15 +41,6 @@ echo 'Existing installation found. Skipping tools download. To reinstall, please
 else
 
 
-#Download megahit
-echo '----- Downloading Megahit --------------------------------------------------'
-git clone https://github.com/voutcn/megahit.git
-cd megahit
-make
-cd ..
-
-
-
 # Download MiniConda and add shebangs.
 echo '----- Setting up Python environment --------------------------------------------'
 if [ $NATIVE ]
@@ -62,7 +53,7 @@ ln -s libncursesw.so.5 libtinfow.so.5
 cd ../bin
 
 ./conda install -c bioconda blast
-
+./conda install -c bioconda megahit
 
 
 MiniConda="$PWD/MiniConda/bin/python"
@@ -110,7 +101,7 @@ declare -A DB_MD5_HUMAN=(
 # if
 if [ $FORCE ]
 then
-echo "FORSE option was choosen"
+echo "FORCE option was choosen"
 fi
 
 
