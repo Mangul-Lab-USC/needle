@@ -31,15 +31,14 @@ fi
 if [ $REINSTALL ]
 then
 echo '----- Removing previous versions -----------------------------------------------'
-rm -fr  MiniConda megahit
+rm -fr  MiniConda minimap2
 fi
 
-
-if [ -d 'megahit' ]
-then
-echo 'Existing installation found. Skipping tools download. To reinstall, please use the -r option.'
-else
-
+# Download and Install minimap2
+echo '----- Downloading and Installing Minimap2 --------------------------------------'
+git clone https://github.com/lh3/minimap2
+cd minimap2 && make
+cd ..
 
 # Download MiniConda and add shebangs.
 echo '----- Setting up Python environment --------------------------------------------'
@@ -52,9 +51,8 @@ cd MiniConda/lib
 ln -s libncursesw.so.5 libtinfow.so.5
 cd ../bin
 
-./conda install -c bioconda blast
 ./conda install -c bioconda megahit
-
+./conda install -c bioconda blast
 
 MiniConda="$PWD/MiniConda/bin/python"
 fi
