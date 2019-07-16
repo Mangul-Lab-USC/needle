@@ -22,7 +22,7 @@ cd ${DIR}/tools/
 if [ $CLEAN_ONLY ]
 then
 echo '----- Removing previous versions -----------------------------------------------'
-rm -fr MiniConda megahit
+rm -fr MiniConda minimap2
 echo 'Done: Cleaning complete.'
 exit 0
 fi
