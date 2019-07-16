@@ -34,6 +34,11 @@ echo '----- Removing previous versions -----------------------------------------
 rm -fr  MiniConda minimap2
 fi
 
+if [ -d 'minimap2' ] 
+then
+echo 'Existing installation found. Skipping tools download. To reinstall, please use the -r option.'
+else
+
 # Download and Install minimap2
 echo '----- Downloading and Installing Minimap2 --------------------------------------'
 git clone https://github.com/lh3/minimap2
