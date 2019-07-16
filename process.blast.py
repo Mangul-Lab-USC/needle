@@ -53,20 +53,24 @@ for line in file:
         new_fields = new_fields.rstrip() + new_column
     
     elif(line[0]!='#'):
-            split= line.split()
-            query_length = float(split[3])
-            identity = float(split[2])
-            alignment_length = float(split[4])
-            adjusted_identity = str(alignment_length * identity / query_length)
-            contig=split[0]
-            id=split[1].split('|')[3]
-            fileOut.write(contig+","+id+","+dict[id]+","+str(identity)+","+str(alignment_length)+","+str(query_length)+","+str(adjusted_identity))
-            fileOut.write("\n")
-            
-            
-            new_identity = ","
-            new_identity = new_identity.join(split)
-            new_identity = new_identity.rstrip() + ","+ adjusted_identity
+        split= line.split()
+        query_length = float(split[3])
+        identity = float(split[2])
+        alignment_length = float(split[4])
+        adjusted_identity = str(alignment_length * identity / query_length)
+        contig=split[0]
+        id=split[1].split('|')[3]
+        if id in dict:
+            name = dict[id]
+        else:
+            name = "NA"
+        fileOut.write(contig+","+id+","+name+","+str(identity)+","+str(alignment_length)+","+str(query_length)+","+str(adjusted_identity))
+        fileOut.write("\n")
+        
+        
+        new_identity = ","
+        new_identity = new_identity.join(split)
+        new_identity = new_identity.rstrip() + ","+ adjusted_identity
 
 file.close()
 
