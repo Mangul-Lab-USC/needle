@@ -110,9 +110,9 @@ wc -l $UNMAPPED
 
 
 
-$minimap2 -ax sr --split-prefix tempMM2.viral ${DB}/viral.vipr/NONFLU_All.fastq $UNMAPPED | samtools view -S -b -F 4 - | samtools sort - > ${SAMPLE}.virus.bam
-$minimap2 -ax sr --split-prefix tempMM2.fungi ${DB}/fungi/${FREF} $UNMAPPED | samtools view -S -b -F 4 - |  samtools sort - > ${SAMPLE}.fungi.bam
-$minimap2 -ax sr --split-prefix tempMM2.protozoa ${DB}/protozoa/protozoa.ncbi.february.3.2018.fasta $UNMAPPED | samtools view -S -b -F 4 - | samtools sort - > ${SAMPLE}.protozoa.bam
+$minimap2 -ax sr --split-prefix ${OUTDIR}/tempMM2.viral ${DB}/viral.vipr/NONFLU_All.fastq $UNMAPPED | samtools view -S -b -F 4 - | samtools sort - > ${SAMPLE}.virus.bam
+$minimap2 -ax sr --split-prefix ${OUTDIR}/tempMM2.fungi ${DB}/fungi/${FREF} $UNMAPPED | samtools view -S -b -F 4 - |  samtools sort - > ${SAMPLE}.fungi.bam
+$minimap2 -ax sr --split-prefix ${OUTDIR}/tempMM2.protozoa ${DB}/protozoa/protozoa.ncbi.february.3.2018.fasta $UNMAPPED | samtools view -S -b -F 4 - | samtools sort - > ${SAMPLE}.protozoa.bam
 
 samtools index ${SAMPLE}.virus.bam
 samtools index ${SAMPLE}.fungi.bam
@@ -171,9 +171,9 @@ samtools view -F 4  ${SAMPLE}.megahit.contigs.protozoa.bam | grep -v -e 'XA:Z:' 
 echo "-----------------------------------------------------"
 echo "Map assembled contigs onto the microbial references"
 
-$minimap2 -ax asm20 --split-prefix tempMM2.viral ${DB}/viral.vipr/NONFLU_All.fastq ${SAMPLE}.virus.megahit.contigs.fa | samtools view -bS -F 4 - | samtools sort -  >${SAMPLE}.virus.megahit.contigs.SV.bam
-$minimap2 -ax asm20 --split-prefix tempMM2.fungi ${DB}/fungi/${FREF} ${SAMPLE}.fungi.megahit.contigs.fa  | samtools view -bS -F 4 - | samtools sort -   >${SAMPLE}.fungi.megahit.contigs.SV.bam
-$minimap2 -ax asm20 --split-prefix tempMM2.protozoa ${DB}/protozoa/protozoa.ncbi.february.3.2018.fasta ${SAMPLE}.protozoa.megahit.contigs.fa  | samtools view -bS -F 4 - | samtools sort - >${SAMPLE}.protozoa.megahit.contigs.SV.bam
+$minimap2 -ax asm20 --split-prefix ${OUTDIR}/tempMM2.viral ${DB}/viral.vipr/NONFLU_All.fastq ${SAMPLE}.virus.megahit.contigs.fa | samtools view -bS -F 4 - | samtools sort -  >${SAMPLE}.virus.megahit.contigs.SV.bam
+$minimap2 -ax asm20 --split-prefix ${OUTDIR}/tempMM2.fungi ${DB}/fungi/${FREF} ${SAMPLE}.fungi.megahit.contigs.fa  | samtools view -bS -F 4 - | samtools sort -   >${SAMPLE}.fungi.megahit.contigs.SV.bam
+$minimap2 -ax asm20 --split-prefix ${OUTDIR}/tempMM2.protozoa ${DB}/protozoa/protozoa.ncbi.february.3.2018.fasta ${SAMPLE}.protozoa.megahit.contigs.fa  | samtools view -bS -F 4 - | samtools sort - >${SAMPLE}.protozoa.megahit.contigs.SV.bam
 
 
 samtools index ${SAMPLE}.virus.megahit.contigs.SV.bam
