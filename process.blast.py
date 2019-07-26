@@ -38,7 +38,7 @@ file_long.close()
 
 
 
-fileOut.write("contig,id,name,identity,alignment_length,contig_length,adjusted_identity\n")
+fileOut.write("contig,id,name,identity,alignment_length,contig_length,mismatches,adjusted_identity\n")
 
 #k21_2    gi|108743534|dbj|AB261990.1|    100.000    916    916    0
 
@@ -56,6 +56,7 @@ for line in file:
         split= line.split()
         query_length = float(split[3])
         identity = float(split[2])
+        mismatches = float(split[5])
         alignment_length = float(split[4])
         adjusted_identity = str(alignment_length * identity / query_length)
         contig=split[0]
@@ -64,7 +65,7 @@ for line in file:
             name = dict[id]
         else:
             name = "NA"
-        fileOut.write(contig+","+id+","+name+","+str(identity)+","+str(alignment_length)+","+str(query_length)+","+str(adjusted_identity))
+        fileOut.write(contig+","+id+","+name+","+str(identity)+","+str(alignment_length)+","+str(query_length)+","+str(mismatches)+","+str(adjusted_identity))
         fileOut.write("\n")
         
         

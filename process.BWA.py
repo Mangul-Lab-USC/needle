@@ -85,10 +85,10 @@ with pysam.AlignmentFile(args.bam, 'rb', check_sq=False) as input_fo:
                 elif args.o=="protozoa" or args.o=="fungi":
                     id_BWA=read.reference_name
                 
-                
-                adjusted_identity= (alignment_length-number_mismatches)/float(read_length)
+                identity = alignment_length/float(read_length)
+                adjusted_identity= 100*(alignment_length-number_mismatches)/float(read_length)
 
-                fileOut.write(read.query_name+","+id_BWA+","+dict[id_BWA]+","+str(number_mismatches)+","+str(alignment_length)+","+str(read_length)+","+str(adjusted_identity))
+                fileOut.write(read.query_name+","+id_BWA+","+dict[id_BWA]+","+str(identity)+","+str(alignment_length)+","+str(read_length)+","+str(number_mismatches)+","+str(adjusted_identity))
                 fileOut.write("\n")
 
 fileOut.close()

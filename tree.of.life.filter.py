@@ -13,10 +13,10 @@ def compare(l):
 
 
     best_genus=l[0][2].split("_")[0]
-    best_identity=identity=float(l[0][6])
+    best_identity=identity=float(l[0][7])
 
     for i in l[1:]:
-        identity=float(i[6])
+        identity=float(i[7])
         genus_blast = i[2].split("_")[0]
         id_blast =i[1].split(".")[0]
         if genus_blast!=best_genus:
@@ -63,7 +63,7 @@ kmers=set()
 for line in reader:
     kmer_name=line[0]
     ref_name_short=line[2].split("_")[0]
-    identity=float(line[6])
+    identity=float(line[7])
     if kmer_name not in kmers: #kmer occurs first time => the best hit
         kmers.add(kmer_name)
         dict_blast[kmer_name] = line
@@ -95,7 +95,7 @@ kmers=set()
 for line in reader:
     kmer_name=line[0]
     ref_id=line[1]
-    identity=float(line[6])
+    identity=float(line[7])
     if kmer_name not in kmers: #kmer occurs first time => the best hit
         kmers.add(kmer_name)
         dict_BWA[kmer_name] = line
@@ -108,7 +108,7 @@ file.close()
 
 
 
-print "Contigs which are only mapped to custom microbial database and is not mapped to TREE OF LIFE FROM BLAST"
+print "Contigs which are only mapped to custom microbial database and are not mapped to TREE OF LIFE FROM BLAST"
 print set(dict_BWA)-set(dict_blast)
 
 
@@ -152,8 +152,8 @@ for i in both:
         #id_BWA=dict_BWA[i][1].split("|")[1]
     genus_blast=dict_blast[i][2].split("_")[0]
     genus_BWA = dict_BWA[i][2].split("_")[0]
-    identity_blast=float(dict_blast[i][6])
-    identity_BWA = float(dict_BWA[i][6])
+    identity_blast=float(dict_blast[i][7])
+    identity_BWA = float(dict_BWA[i][7])
 
     print id_blast,id_BWA,genus_blast,genus_BWA,identity_BWA,identity_blast
     #JF145555 gb|AF191073|Strain|UNKNOWN-AF191073|Description|Stealth Uncultured gb 99.2174559687 99.2174559687
