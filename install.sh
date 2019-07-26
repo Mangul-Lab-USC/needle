@@ -57,7 +57,7 @@ ln -s libncursesw.so.5 libtinfow.so.5
 cd ../bin
 
 ./conda install -c bioconda megahit
-./conda install -c bioconda blast
+./conda install -c bioconda blast=2.7.1
 
 MiniConda="$PWD/MiniConda/bin/python"
 fi
